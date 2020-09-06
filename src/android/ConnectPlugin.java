@@ -271,8 +271,18 @@ public class ConnectPlugin extends CordovaPlugin {
             }
             return true;
 
-        } else if (action.equals("logEvent")) {
-            executeLogEvent(args, callbackContext);
+        } 
+        else if (action.equals("logEvent")) 
+        {
+            cordova.getThreadPool().execute(new Runnable() 
+            {
+                public void run() 
+                {
+                    executeLogEvent(args, callbackContext);
+                    callbackContext.success(); // Thread-safe.
+                }
+            });
+
             return true;
 
         } else if (action.equals("logPurchase")) {
