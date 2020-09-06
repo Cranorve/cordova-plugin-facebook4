@@ -29,6 +29,13 @@ exports.logEvent = function logEvent (name, params, valueToSum, s, f) {
   }
 }
 
+//public void logViewContentEvent (String contentType, String contentData, String contentId, String currency, double price)
+
+exports.logViewContent = function logViewContent (contentType, contentData, contentId, contentCurrency, contentPrice, s, f) 
+{
+  exec(s, f, 'FacebookConnectPlugin', 'logViewContent', [contentType, contentData, contentId, contentCurrency, contentPrice])
+}
+
 exports.logPurchase = function logPurchase (value, currency, s, f) {
   exec(s, f, 'FacebookConnectPlugin', 'logPurchase', [value, currency])
 }
