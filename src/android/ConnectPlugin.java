@@ -85,8 +85,11 @@ public class ConnectPlugin extends CordovaPlugin {
     private MessageDialog messageDialog;
 
     @Override
-    protected void pluginInitialize() {
-        FacebookSdk.sdkInitialize(cordova.getActivity().getApplicationContext());
+    protected void pluginInitialize()
+    {
+        //FacebookSdk.sdkInitialize(cordova.getActivity().getApplicationContext());
+
+        FacebookSdk.fullyInitialize();
 
         FacebookSdk.setIsDebugEnabled(true);
         FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS);
@@ -239,13 +242,13 @@ public class ConnectPlugin extends CordovaPlugin {
     public void onResume(boolean multitasking) {
         super.onResume(multitasking);
         // Developers can observe how frequently users activate their app by logging an app activation event.
-        AppEventsLogger.activateApp(cordova.getActivity().getApplication());
+        //AppEventsLogger.activateApp(cordova.getActivity().getApplication());
     }
 
     @Override
     public void onPause(boolean multitasking) {
         super.onPause(multitasking);
-        AppEventsLogger.deactivateApp(cordova.getActivity().getApplication());
+        //AppEventsLogger.deactivateApp(cordova.getActivity().getApplication());
     }
 
     @Override
@@ -656,7 +659,7 @@ public class ConnectPlugin extends CordovaPlugin {
         String cntData = args.getString(1);
         String cntId   = args.getString(2);
         String cntCurr = args.getString(3);
-        Double cntAmnt = args.getDouble(3);
+        Double cntAmnt = args.getDouble(4);
 
         Bundle params = new Bundle();
         params.putString(AppEventsConstants.EVENT_PARAM_CONTENT_TYPE, cntType);
