@@ -54,6 +54,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import static com.facebook.FacebookSdk.setAdvertiserIDCollectionEnabled;
+import static com.facebook.FacebookSdk.setAutoLogAppEventsEnabled;
+
 public class ConnectPlugin extends CordovaPlugin {
 
     private static final int INVALID_ERROR_CODE = -2; //-1 is FacebookRequestError.INVALID_ERROR_CODE
@@ -82,6 +85,10 @@ public class ConnectPlugin extends CordovaPlugin {
     @Override
     protected void pluginInitialize() {
         FacebookSdk.sdkInitialize(cordova.getActivity().getApplicationContext());
+
+        setAutoLogAppEventsEnabled(true);
+        
+        setAdvertiserIDCollectionEnabled(true);
 
         // create callbackManager
         callbackManager = CallbackManager.Factory.create();
