@@ -86,9 +86,12 @@ public class ConnectPlugin extends CordovaPlugin {
     protected void pluginInitialize() {
         FacebookSdk.sdkInitialize(cordova.getActivity().getApplicationContext());
 
-        setAutoLogAppEventsEnabled(true);
-        
-        setAdvertiserIDCollectionEnabled(true);
+        FacebookSdk.setIsDebugEnabled(true);
+        FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS);
+
+        FacebookSdk.setAutoLogAppEventsEnabled(true);
+
+        FacebookSdk.setAdvertiserIDCollectionEnabled(true);
 
         // create callbackManager
         callbackManager = CallbackManager.Factory.create();
@@ -299,8 +302,34 @@ public class ConnectPlugin extends CordovaPlugin {
             });
 
             return true;
+        }
+        else if (action.equals("logViewContent"))
+        {
+            Log.d( TAG, args );
+            Log.d( TAG, args.toString(4) );
 
-        } else if (action.equals("logPurchase")) {
+            //public void logViewContentEvent (String contentType, String contentData, String contentId, String currency, double price)
+            cordova.getThreadPool().execute(new Runnable() 
+            {
+                public void run() 
+                {
+                    try
+                    {
+                        executeLogEvent(args, callbackContext);
+                    }
+                    catch (JSONException e)
+                    {
+                        //e.printStackTrace();
+                        Log.w(TAG, "error JSON", e);
+                    }
+                    callbackContext.success(); // Thread-safe.
+                }
+            });
+
+            return true;
+
+        }
+        else if (action.equals("logPurchase")) {
             /*
              * While calls to logEvent can be made to register purchase events,
              * there is a helper method that explicitly takes a currency indicator.
@@ -610,6 +639,33 @@ public class ConnectPlugin extends CordovaPlugin {
             // Request new read permissions
             loginManager.logInWithReadPermissions(cordova.getActivity(), permissions);
         }
+    }
+
+    //public void logViewContentEvent (String contentType, String contentData, String contentId, String currency, double price)
+    private void executeLogViewContent(JSONArray args, CallbackContext callbackContext) throws JSONException 
+    {
+        if (args.length() == 0) {
+            // Not enough parameters
+            callbackContext.error("Invalid arguments");
+            return;
+        }
+
+        String cntType = args.getString(0);
+        String cntData = args.getString(1);
+        String cntId   = args.getString(2);
+        String cntCurr = args.getString(3);
+        String cntAmnt = args.getString(3);
+
+        Bundle params = new Bundle();
+        params.putString(AppEventsConstants.EVENT_PARAM_CONTENT_TYPE, cntType);
+        params.putString(AppEventsConstants.EVENT_PARAM_CONTENT, cntData);
+        params.putString(AppEventsConstants.EVENT_PARAM_CONTENT_ID, cntId);
+        params.putString(AppEventsConstants.EVENT_PARAM_CURRENCY, cntCurr);
+        
+        logger.logEvent(AppEventsConstants.EVENT_NAME_VIEWED_CONTENT, cntAmnt, params);       
+
+        callbackContext.success();
+
     }
 
     private void executeLogEvent(JSONArray args, CallbackContext callbackContext) throws JSONException {
