@@ -20,6 +20,8 @@ import com.facebook.FacebookServiceException;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.FacebookAuthorizationException;
+import com.facebook.LoggingBehavior;
+import com.facebook.appevents.AppEventsConstants;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.applinks.AppLinkData;
 import com.facebook.login.LoginManager;
@@ -305,7 +307,7 @@ public class ConnectPlugin extends CordovaPlugin {
         }
         else if (action.equals("logViewContent"))
         {
-            Log.d( TAG, args );
+            Log.d( TAG, args.toString() );
             Log.d( TAG, args.toString(4) );
 
             //public void logViewContentEvent (String contentType, String contentData, String contentId, String currency, double price)
@@ -654,7 +656,7 @@ public class ConnectPlugin extends CordovaPlugin {
         String cntData = args.getString(1);
         String cntId   = args.getString(2);
         String cntCurr = args.getString(3);
-        String cntAmnt = args.getString(3);
+        Double cntAmnt = args.getDouble(3);
 
         Bundle params = new Bundle();
         params.putString(AppEventsConstants.EVENT_PARAM_CONTENT_TYPE, cntType);
