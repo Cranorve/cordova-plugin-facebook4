@@ -317,7 +317,7 @@ public class ConnectPlugin extends CordovaPlugin {
                 {
                     try
                     {
-                        executeLogEvent(args, callbackContext);
+                        executeLogViewContent(args, callbackContext);
                     }
                     catch (JSONException e)
                     {
