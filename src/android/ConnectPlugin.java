@@ -278,7 +278,15 @@ public class ConnectPlugin extends CordovaPlugin {
             {
                 public void run() 
                 {
-                    executeLogEvent(args, callbackContext);
+                    try
+                    {
+                        executeLogEvent(args, callbackContext);
+                    }
+                    catch (JSONException e)
+                    {
+                        //e.printStackTrace();
+                        Log.w(TAG, "error JSON", e);
+                    }
                     callbackContext.success(); // Thread-safe.
                 }
             });
