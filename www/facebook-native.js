@@ -54,6 +54,11 @@ exports.logEventProductPurchase = function logEventProductPurchase (contentType,
   exec(s, f, 'FacebookConnectPlugin', 'logEventProductPurchase', [contentType, contentData, contentId, contentCurrency, contentPrice])
 }
 
+exports.logEventInitiateCheckout = function logEventInitiateCheckout( contentType, contentData, contentId, contentCurrency, contentPrice, numItems, PaymentInfo, s, f)
+{
+  exec(s, f, 'FacebookConnectPlugin', 'logEventInitiateCheckout', [contentType, contentData, contentId, contentCurrency, contentPrice, numItems, PaymentInfo])
+}
+
 exports.logPurchase = function logPurchase (value, currency, s, f) {
   exec(s, f, 'FacebookConnectPlugin', 'logPurchase', [value, currency])
 }

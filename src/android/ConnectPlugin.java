@@ -428,20 +428,17 @@ public class ConnectPlugin extends CordovaPlugin {
             return true;
 
         }
-        /*
-        else if (action.equals("logViewContent"))
+        else if (action.equals("logEventInitiateCheckout"))
         {
-            Log.d( TAG, args.toString() );
             Log.d( TAG, args.toString(4) );
 
-            //public void logViewContentEvent (String contentType, String contentData, String contentId, String currency, double price)
             cordova.getThreadPool().execute(new Runnable()
             {
                 public void run()
                 {
                     try
                     {
-                        executeLogViewContent(args, callbackContext);
+                        executeEventInitiateCheckout(args, callbackContext);
                     }
                     catch (JSONException e)
                     {
@@ -455,7 +452,6 @@ public class ConnectPlugin extends CordovaPlugin {
             return true;
 
         }
-        */
         else if (action.equals("logPurchase")) {
             /*
              * While calls to logEvent can be made to register purchase events,
@@ -901,21 +897,8 @@ public class ConnectPlugin extends CordovaPlugin {
         callbackContext.success();
     }
 
-/*
-    private void executeEventViewContent(JSONArray args, CallbackContext callbackContext) throws JSONException
+    private void executeEventInitiateCheckout(JSONArray args, CallbackContext callbackContext) throws JSONException
     {
-        logger.logEvent(AppEventsConstants.EVENT_NAME_SEARCHED, cntAmnt, params);
-        logger.logEvent(AppEventsConstants.EVENT_NAME_ADDED_PAYMENT_INFO, cntAmnt, params);
-        logger.logEvent(AppEventsConstants.EVENT_NAME_ADDED_TO_CART, cntAmnt, params);
-        logger.logEvent(AppEventsConstants.EVENT_NAME_CUSTOMIZE_PRODUCT, cntAmnt, params);
-        logger.logEvent(AppEventsConstants.EVENT_NAME_SUBSCRIBE, cntAmnt, params);
-        logger.logEvent(AppEventsConstants.EVENT_NAME_SPENT_CREDITS, cntAmnt, params);
-        logger.logEvent(AppEventsConstants.EVENT_NAME_PRODUCT_CATALOG_UPDATE, cntAmnt, params);
-        logger.logEvent(AppEventsConstants.EVENT_NAME_INITIATED_CHECKOUT, cntAmnt, params);
-        logger.logEvent(AppEventsConstants.EVENT_NAME_, cntAmnt, params);
-
-
-
         if (args.length() == 0)
         {
             // Not enough parameters
@@ -926,29 +909,25 @@ public class ConnectPlugin extends CordovaPlugin {
         String cntType = args.getString(0);
         String cntData = args.getString(1);
         String cntId   = args.getString(2);
+        String cntCurr = args.getString(3);
+        Double cntAmnt = args.getDouble(4);
+        Int cntNumItms = args.getDouble(5);
+        Boolean cntPayInfo = Boolean.valueOf( args.getDouble(6) );
 
         Bundle params = new Bundle();
         params.putString(AppEventsConstants.EVENT_PARAM_CONTENT_TYPE, cntType);
         params.putString(AppEventsConstants.EVENT_PARAM_CONTENT, cntData);
         params.putString(AppEventsConstants.EVENT_PARAM_CONTENT_ID, cntId);
+        params.putString(AppEventsConstants.EVENT_PARAM_CURRENCY, cntCurr);
 
-        if ( args.length() > 2 )
-        {
-            String cntCurr = args.getString(3);
-            Double cntAmnt = args.getDouble(4);
+        params.putInt   (AppEventsConstants.EVENT_PARAM_NUM_ITEMS , cntNumItms);
+        params.putInt   (AppEventsConstants.EVENT_PARAM_PAYMENT_INFO_AVAILABLE , cntPayInfo ? 1 : 0 );
 
-            params.putString(AppEventsConstants.EVENT_PARAM_CURRENCY, cntCurr);
-
-            logger.logEvent(AppEventsConstants.EVENT_NAME_SEARCHED, cntAmnt, params);
-        }
-        else
-        {
-            logger.logEvent(AppEventsConstants.EVENT_NAME_VIEWED_CONTENT, params);
-        }
+        logger.logEvent(AppEventsConstants.EVENT_NAME_INITIATED_CHECKOUT, cntAmnt, params);
 
         callbackContext.success();
     }
-*/
+
 
 
     private void executeLogEvent(JSONArray args, CallbackContext callbackContext) throws JSONException {
