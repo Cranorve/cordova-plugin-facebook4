@@ -310,11 +310,9 @@ public class ConnectPlugin extends CordovaPlugin {
         }
         else if (action.equals("logViewContent"))
         {
-            Log.d( TAG, args.toString() );
             Log.d( TAG, args.toString(4) );
 
-            //public void logViewContentEvent (String contentType, String contentData, String contentId, String currency, double price)
-            cordova.getThreadPool().execute(new Runnable() 
+            cordova.getThreadPool().execute(new Runnable()
             {
                 public void run() 
                 {
@@ -334,6 +332,130 @@ public class ConnectPlugin extends CordovaPlugin {
             return true;
 
         }
+        else if (action.equals("logEventSearch"))
+        {
+            Log.d( TAG, args.toString(4) );
+
+            cordova.getThreadPool().execute(new Runnable()
+            {
+                public void run()
+                {
+                    try
+                    {
+                        executeEventSearch(args, callbackContext);
+                    }
+                    catch (JSONException e)
+                    {
+                        //e.printStackTrace();
+                        Log.w(TAG, "error JSON", e);
+                    }
+                    callbackContext.success(); // Thread-safe.
+                }
+            });
+
+            return true;
+
+        }
+        else if (action.equals("logEventProductCartAdd"))
+        {
+            Log.d( TAG, args.toString(4) );
+
+            cordova.getThreadPool().execute(new Runnable()
+            {
+                public void run()
+                {
+                    try
+                    {
+                        executeEventProductCartAdd(args, callbackContext);
+                    }
+                    catch (JSONException e)
+                    {
+                        //e.printStackTrace();
+                        Log.w(TAG, "error JSON", e);
+                    }
+                    callbackContext.success(); // Thread-safe.
+                }
+            });
+
+            return true;
+
+        }
+        else if (action.equals("logEventProductCustomize"))
+        {
+            Log.d( TAG, args.toString(4) );
+
+            cordova.getThreadPool().execute(new Runnable()
+            {
+                public void run()
+                {
+                    try
+                    {
+                        executeEventProductCustomize(args, callbackContext);
+                    }
+                    catch (JSONException e)
+                    {
+                        //e.printStackTrace();
+                        Log.w(TAG, "error JSON", e);
+                    }
+                    callbackContext.success(); // Thread-safe.
+                }
+            });
+
+            return true;
+
+        }
+        else if (action.equals("logEventProductPurchase"))
+        {
+            Log.d( TAG, args.toString(4) );
+
+            cordova.getThreadPool().execute(new Runnable()
+            {
+                public void run()
+                {
+                    try
+                    {
+                        executeEventProductPurchase(args, callbackContext);
+                    }
+                    catch (JSONException e)
+                    {
+                        //e.printStackTrace();
+                        Log.w(TAG, "error JSON", e);
+                    }
+                    callbackContext.success(); // Thread-safe.
+                }
+            });
+
+            return true;
+
+        }
+        /*
+        else if (action.equals("logViewContent"))
+        {
+            Log.d( TAG, args.toString() );
+            Log.d( TAG, args.toString(4) );
+
+            //public void logViewContentEvent (String contentType, String contentData, String contentId, String currency, double price)
+            cordova.getThreadPool().execute(new Runnable()
+            {
+                public void run()
+                {
+                    try
+                    {
+                        executeLogViewContent(args, callbackContext);
+                    }
+                    catch (JSONException e)
+                    {
+                        //e.printStackTrace();
+                        Log.w(TAG, "error JSON", e);
+                    }
+                    callbackContext.success(); // Thread-safe.
+                }
+            });
+
+            return true;
+
+        }
+        */
         else if (action.equals("logPurchase")) {
             /*
              * While calls to logEvent can be made to register purchase events,
@@ -649,7 +771,69 @@ public class ConnectPlugin extends CordovaPlugin {
     //public void logViewContentEvent (String contentType, String contentData, String contentId, String currency, double price)
     private void executeLogViewContent(JSONArray args, CallbackContext callbackContext) throws JSONException 
     {
-        if (args.length() == 0) {
+        if (args.length() == 0)
+        {
+            // Not enough parameters
+            callbackContext.error("Invalid arguments");
+            return;
+        }
+
+        String cntType = args.getString(0);
+        String cntData = args.getString(1);
+        String cntId   = args.getString(2);
+
+        Bundle params = new Bundle();
+        params.putString(AppEventsConstants.EVENT_PARAM_CONTENT_TYPE, cntType);
+        params.putString(AppEventsConstants.EVENT_PARAM_CONTENT, cntData);
+        params.putString(AppEventsConstants.EVENT_PARAM_CONTENT_ID, cntId);
+
+        if ( args.length() > 2 )
+        {
+            String cntCurr = args.getString(3);
+            Double cntAmnt = args.getDouble(4);
+
+            if ( null != cntCurr && null != cntAmnt ) {
+                params.putString(AppEventsConstants.EVENT_PARAM_CURRENCY, cntCurr);
+
+                logger.logEvent(AppEventsConstants.EVENT_NAME_VIEWED_CONTENT, cntAmnt, params);
+            }
+            else
+            {
+                logger.logEvent(AppEventsConstants.EVENT_NAME_VIEWED_CONTENT, params);
+            }
+        }
+        else
+        {
+            logger.logEvent(AppEventsConstants.EVENT_NAME_VIEWED_CONTENT, params);
+        }
+
+        callbackContext.success();
+    }
+
+    private void executeEventSearch(JSONArray args, CallbackContext callbackContext) throws JSONException
+    {
+        String cntType = args.getString(0);
+        String cntData = args.getString(1);
+        String cntId   = args.getString(2);
+
+        String cntSrch = args.getString(3);
+        boolean cntSucc = Boolean.valueOf( args.getString(4) );
+
+        Bundle params = new Bundle();
+        params.putString(AppEventsConstants.EVENT_PARAM_CONTENT_TYPE, cntType);
+        params.putString(AppEventsConstants.EVENT_PARAM_CONTENT, cntData);
+        params.putString(AppEventsConstants.EVENT_PARAM_CONTENT_ID, cntId);
+
+        params.putString(AppEventsConstants.EVENT_PARAM_SEARCH_STRING, cntSrch);
+        params.putInt(AppEventsConstants.EVENT_PARAM_SUCCESS, cntSucc ? 1 : 0);
+
+        logger.logEvent(AppEventsConstants.EVENT_NAME_SEARCHED, params);
+    }
+
+    private void executeEventProductCartAdd(JSONArray args, CallbackContext callbackContext) throws JSONException
+    {
+        if (args.length() < 5)
+        {
             // Not enough parameters
             callbackContext.error("Invalid arguments");
             return;
@@ -666,12 +850,106 @@ public class ConnectPlugin extends CordovaPlugin {
         params.putString(AppEventsConstants.EVENT_PARAM_CONTENT, cntData);
         params.putString(AppEventsConstants.EVENT_PARAM_CONTENT_ID, cntId);
         params.putString(AppEventsConstants.EVENT_PARAM_CURRENCY, cntCurr);
-        
-        logger.logEvent(AppEventsConstants.EVENT_NAME_VIEWED_CONTENT, cntAmnt, params);       
+
+        logger.logEvent(AppEventsConstants.EVENT_NAME_ADDED_TO_CART, cntAmnt, params);
 
         callbackContext.success();
-
     }
+
+    private void executeEventProductCustomize(JSONArray args, CallbackContext callbackContext) throws JSONException
+    {
+        if (args.length() == 0)
+        {
+            // Not enough parameters
+            callbackContext.error("Invalid arguments");
+            return;
+        }
+
+        String customParam = args.getString(0);
+        String customValue = args.getString(1);
+
+        Bundle params = new Bundle();
+        params.putString(customParam, customValue );
+
+        logger.logEvent(AppEventsConstants.EVENT_NAME_CUSTOMIZE_PRODUCT, params);
+
+        callbackContext.success();
+    }
+
+    private void executeEventProductPurchase(JSONArray args, CallbackContext callbackContext) throws JSONException
+    {
+        if (args.length() == 0)
+        {
+            // Not enough parameters
+            callbackContext.error("Invalid arguments");
+            return;
+        }
+
+        String cntType = args.getString(0);
+        String cntData = args.getString(1);
+        String cntId   = args.getString(2);
+        Currency cntCurr = Currency.getInstance(args.getString(3));
+        BigDecimal cntAmnt = BigDecimal.valueOf(args.getDouble(4));
+
+        Bundle params = new Bundle();
+        params.putString(AppEventsConstants.EVENT_PARAM_CONTENT_TYPE, cntType);
+        params.putString(AppEventsConstants.EVENT_PARAM_CONTENT, cntData);
+        params.putString(AppEventsConstants.EVENT_PARAM_CONTENT_ID, cntId);
+
+        logger.logPurchase(cntAmnt, cntCurr, params);
+
+        callbackContext.success();
+    }
+
+/*
+    private void executeEventViewContent(JSONArray args, CallbackContext callbackContext) throws JSONException
+    {
+        logger.logEvent(AppEventsConstants.EVENT_NAME_SEARCHED, cntAmnt, params);
+        logger.logEvent(AppEventsConstants.EVENT_NAME_ADDED_PAYMENT_INFO, cntAmnt, params);
+        logger.logEvent(AppEventsConstants.EVENT_NAME_ADDED_TO_CART, cntAmnt, params);
+        logger.logEvent(AppEventsConstants.EVENT_NAME_CUSTOMIZE_PRODUCT, cntAmnt, params);
+        logger.logEvent(AppEventsConstants.EVENT_NAME_SUBSCRIBE, cntAmnt, params);
+        logger.logEvent(AppEventsConstants.EVENT_NAME_SPENT_CREDITS, cntAmnt, params);
+        logger.logEvent(AppEventsConstants.EVENT_NAME_PRODUCT_CATALOG_UPDATE, cntAmnt, params);
+        logger.logEvent(AppEventsConstants.EVENT_NAME_INITIATED_CHECKOUT, cntAmnt, params);
+        logger.logEvent(AppEventsConstants.EVENT_NAME_, cntAmnt, params);
+
+
+
+        if (args.length() == 0)
+        {
+            // Not enough parameters
+            callbackContext.error("Invalid arguments");
+            return;
+        }
+
+        String cntType = args.getString(0);
+        String cntData = args.getString(1);
+        String cntId   = args.getString(2);
+
+        Bundle params = new Bundle();
+        params.putString(AppEventsConstants.EVENT_PARAM_CONTENT_TYPE, cntType);
+        params.putString(AppEventsConstants.EVENT_PARAM_CONTENT, cntData);
+        params.putString(AppEventsConstants.EVENT_PARAM_CONTENT_ID, cntId);
+
+        if ( args.length() > 2 )
+        {
+            String cntCurr = args.getString(3);
+            Double cntAmnt = args.getDouble(4);
+
+            params.putString(AppEventsConstants.EVENT_PARAM_CURRENCY, cntCurr);
+
+            logger.logEvent(AppEventsConstants.EVENT_NAME_SEARCHED, cntAmnt, params);
+        }
+        else
+        {
+            logger.logEvent(AppEventsConstants.EVENT_NAME_VIEWED_CONTENT, params);
+        }
+
+        callbackContext.success();
+    }
+*/
+
 
     private void executeLogEvent(JSONArray args, CallbackContext callbackContext) throws JSONException {
         if (args.length() == 0) {
@@ -1006,7 +1284,7 @@ public class ConnectPlugin extends CordovaPlugin {
     /**
      * Wraps the given object if necessary.
      *
-     * If the object is null or , returns {@link #JSONObject.NULL}.
+     * If the object is null or , returns .
      * If the object is a {@code JSONArray} or {@code JSONObject}, no wrapping is necessary.
      * If the object is {@code JSONObject.NULL}, no wrapping is necessary.
      * If the object is an array or {@code Collection}, returns an equivalent {@code JSONArray}.
