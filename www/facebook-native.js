@@ -29,11 +29,29 @@ exports.logEvent = function logEvent (name, params, valueToSum, s, f) {
   }
 }
 
-//public void logViewContentEvent (String contentType, String contentData, String contentId, String currency, double price)
-
-exports.logViewContent = function logViewContent (contentType, contentData, contentId, contentCurrency, contentPrice, s, f) 
+exports.logViewContent = function logViewContent (contentType, contentData, contentId, contentCurrency, contentPrice, s, f)
 {
   exec(s, f, 'FacebookConnectPlugin', 'logViewContent', [contentType, contentData, contentId, contentCurrency, contentPrice])
+}
+
+exports.logEventSearch = function logEventSearch (contentType, contentData, contentId, searchQuery, searchSuccess, s, f)
+{
+  exec(s, f, 'FacebookConnectPlugin', 'logEventSearch', [contentType, contentData, contentId, searchQuery, searchSuccess])
+}
+
+exports.logEventProductCartAdd = function logEventProductCartAdd (contentType, contentData, contentId, contentCurrency, contentPrice, s, f)
+{
+  exec(s, f, 'FacebookConnectPlugin', 'logEventProductCartAdd', [contentType, contentData, contentId, contentCurrency, contentPrice])
+}
+
+exports.logEventProductCustomize = function logEventProductCustomize (contentParam, contentValue, s, f)
+{
+  exec(s, f, 'FacebookConnectPlugin', 'logEventProductCustomize', [contentParam, contentValue])
+}
+
+exports.logEventProductPurchase = function logEventProductPurchase (contentType, contentData, contentId, contentCurrency, contentPrice, s, f)
+{
+  exec(s, f, 'FacebookConnectPlugin', 'logEventProductPurchase', [contentType, contentData, contentId, contentCurrency, contentPrice])
 }
 
 exports.logPurchase = function logPurchase (value, currency, s, f) {
