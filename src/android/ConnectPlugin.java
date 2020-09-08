@@ -911,8 +911,8 @@ public class ConnectPlugin extends CordovaPlugin {
         String cntId   = args.getString(2);
         String cntCurr = args.getString(3);
         Double cntAmnt = args.getDouble(4);
-        Int cntNumItms = args.getDouble(5);
-        Boolean cntPayInfo = Boolean.valueOf( args.getDouble(6) );
+        Integer cntNumItms = args.getInt(5);
+        Boolean cntPayInfo = Boolean.valueOf( args.getString(6) );
 
         Bundle params = new Bundle();
         params.putString(AppEventsConstants.EVENT_PARAM_CONTENT_TYPE, cntType);
